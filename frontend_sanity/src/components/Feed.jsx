@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { client } from '../client';
-import { feedQuery, searchQuery, userQuery } from '../utils/data';
+import { feedQuery, searchQuery } from '../utils/data';
 import MasonryLayout from './MasonryLayout';
 import Spinner from './Spinner';
 
-const Feed = ({ user }) => {
+const Feed = () => {
   const [pins, setPins] = useState();
   const [loading, setLoading] = useState(false);
   const { categoryId } = useParams();
@@ -26,34 +26,9 @@ const Feed = ({ user }) => {
       client.fetch(feedQuery).then((data) => {
         setPins(data);
         setLoading(false);
-        // makeFeed(data);
       });
     }
   }, [categoryId]);
-
-  // function makeFeed(data){
-
-  //   // client.fetch(categoriesQuery).then((categories) => {
-  //   //   categories.map()
-
-
-
-
-
-  //   // });
-  //   //console.log(user);
-  //   console.log(user._id);
-  //   client.fetch(userQuery(user._id)).then((userData) => {
-  //     console.log(userData);
-  //   });
-
-
-  //   let pinList = [];
-  //   for(var i =0; i <10; i++){
-  //     pinList.push(data[i]);
-  //   }
-  //   setPins(pinList);
-  // }
 
   const ideaName = categoryId || 'new';
   if (loading) {

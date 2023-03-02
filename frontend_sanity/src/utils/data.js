@@ -52,12 +52,6 @@
 
 export const categoriesQuery = `*[_type == "category"]`;
 
-// export const favoriteCategoriesQuery = (userId) =>{
-//   const query = `*[_type == "user" && _id == '${userId}']`;
-//   return query;
-// }
-
-
 export const feedQuery = `*[_type == "pin"] | order(_createdAt desc) {
   image{
     asset->{

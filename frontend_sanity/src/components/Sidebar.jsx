@@ -21,7 +21,7 @@ const Sidebar = ({ closeToggle, user }) => {
     client.fetch(categoriesQuery).then((data) => {
       setCategories(data);
     });
-  })
+  }, [])
 
   return (
     <div className="flex flex-col justify-between bg-white h-full overflow-y-scroll min-w-210 hide-scrollbar">

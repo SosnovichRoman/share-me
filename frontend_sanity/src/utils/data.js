@@ -52,6 +52,35 @@
 
 export const categoriesQuery = `*[_type == "category"]`;
 
+// export const favoriteCategoriesQuery = (userId, categoryId) =>{
+//   const query = `*[_type == "user" && _id == '${userId}' && favoriteCategoies[]._ref == '${categoryId}' ]`;
+//   return query;
+// }
+
+export const favoriteCategoriesQuery = (userId, categoryId) =>{
+  const query = `*[_type == "user" && _id == '${userId}' ]{
+    favoriteCategories[category._ref == "${categoryId}"]{
+      category,
+      rate,
+    }
+  }`;
+  return query;
+}
+
+// export const totalCategoriesQuery = (userId) =>{
+//   const query = `*[_type == "category"]{
+//     name,
+//     _id,
+//     "rate": 10,
+//     "secondRate": *[_type == "user" && _id == '${userId}' && favoriteCategories[category._ref == ^._id]]{
+//       userName,
+//       favoriteCategories[],
+//       "strangeId": ^._id,
+//     }
+//   }`;
+//   return query;
+// }
+
 export const feedQuery = `*[_type == "pin"] | order(_createdAt desc) {
   image{
     asset->{
@@ -140,6 +169,32 @@ export const pinDetailMorePinQuery = (pin) => {
 
 export const searchQuery = (searchTerm) => {
   const query = `*[_type == "pin" && title match '${searchTerm}*' || category._ref in *[_type=="category" && name=='${searchTerm}']._id  || about match '${searchTerm}*']{
+        image{
+          asset->{
+            url
+          }
+        },
+            _id,
+            destination,
+            postedBy->{
+              _id,
+              userName,
+              image
+            },
+            save[]{
+              _key,
+              postedBy->{
+                _id,
+                userName,
+                image
+              },
+            },
+          }`;
+  return query;
+};
+
+export const searchWithLimitQuery = (searchTerm, limit) => {
+  const query = `*[_type == "pin" && title match '${searchTerm}*' || category._ref in *[_type=="category" && name=='${searchTerm}']._id  || about match '${searchTerm}*'][0...${limit}]{
         image{
           asset->{
             url

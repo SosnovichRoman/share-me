@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { MdDownloadForOffline } from 'react-icons/md';
 import { AiTwotoneDelete } from 'react-icons/ai';
 import { BsFillArrowUpRightCircleFill } from 'react-icons/bs';
+import { userQuery } from '../utils/data';
 
 import { client, urlFor } from '../client';
 
@@ -57,21 +58,48 @@ const Pin = ({ pin }) => {
   };
 
   const updateRating = (categoryId) => {
-    if(user){
+    if (user) {
       console.log(user);
-      client
-      .patch(user?.id)
-      .setIfMissing({ [ `favoriteCategories[category._ref == "${categoryId}"].rate` ]: 0 })
-      .inc({ [ `favoriteCategories[category._ref == "${categoryId}"].rate` ]: pinSaveRate })
-      .commit()
-      .then(() => {
-        console.log("End update rating");
-        window.location.reload();
+      let shouldAppend = true;
+
+      client.fetch(userQuery(user?.id)).then((userData) =>{
+        userData[0]?.favoriteCategories?.map((favCategory) => {
+          console.log(favCategory.category._ref, categoryId);
+          if(favCategory.category._ref === categoryId){
+            shouldAppend = false;
+            console.log("should false");
+          } 
+          console.log("--");
+        })
+        // Append new item of favorite category if necessary
+        if(shouldAppend){
+          client
+          .patch(user?._id)
+          .insert('after', 'favoriteCategories[-1]', [{category: {_ref: categoryId, _type: "reference"}, rate: 0}])
+          .commit({autoGenerateArrayKeys: true})
+          .then(() => {
+            incrementRating(categoryId);
+          })
+          .catch((err) => {
+            console.error('Insert field to favorite rating failed: ', err.message)
+          });
+        }
+        else incrementRating(categoryId);
       })
-      .catch((err) => {
-        console.error('Update failed: ', err.message)
-      });
     }
+  }
+
+  const incrementRating = (categoryId) =>{
+    client
+    .patch(user?.id)
+    .inc({ [ `favoriteCategories[category._ref == "${categoryId}"].rate` ]: pinSaveRate })
+    .commit()
+    .then(() => {
+      console.log("End update rating");
+    })
+    .catch((err) => {
+      console.error('Update failed: ', err.message)
+    });
   }
 
   return (

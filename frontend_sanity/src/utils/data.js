@@ -52,11 +52,6 @@
 
 export const categoriesQuery = `*[_type == "category"]`;
 
-// export const favoriteCategoriesQuery = (userId, categoryId) =>{
-//   const query = `*[_type == "user" && _id == '${userId}' && favoriteCategoies[]._ref == '${categoryId}' ]`;
-//   return query;
-// }
-
 export const favoriteCategoriesQuery = (userId, categoryId) =>{
   const query = `*[_type == "user" && _id == '${userId}' ]{
     favoriteCategories[category._ref == "${categoryId}"]{
@@ -67,21 +62,8 @@ export const favoriteCategoriesQuery = (userId, categoryId) =>{
   return query;
 }
 
-// export const totalCategoriesQuery = (userId) =>{
-//   const query = `*[_type == "category"]{
-//     name,
-//     _id,
-//     "rate": 10,
-//     "secondRate": *[_type == "user" && _id == '${userId}' && favoriteCategories[category._ref == ^._id]]{
-//       userName,
-//       favoriteCategories[],
-//       "strangeId": ^._id,
-//     }
-//   }`;
-//   return query;
-// }
-
 export const feedQuery = `*[_type == "pin"] | order(_createdAt desc) {
+  category,
   image{
     asset->{
       url
@@ -106,6 +88,7 @@ export const feedQuery = `*[_type == "pin"] | order(_createdAt desc) {
 
 export const pinDetailQuery = (pinId) => {
   const query = `*[_type == "pin" && _id == '${pinId}']{
+    category,
     image{
       asset->{
         url
@@ -142,7 +125,8 @@ export const pinDetailQuery = (pinId) => {
 };
 
 export const pinDetailMorePinQuery = (pin) => {
-  const query = `*[_type == "pin" && category == '${pin.category}' && _id != '${pin._id}' ]{
+  const query = `*[_type == "pin" && category._ref == '${pin.category._ref}' && _id != '${pin._id}' ]{
+    category,
     image{
       asset->{
         url
@@ -169,6 +153,7 @@ export const pinDetailMorePinQuery = (pin) => {
 
 export const searchQuery = (searchTerm) => {
   const query = `*[_type == "pin" && title match '${searchTerm}*' || category._ref in *[_type=="category" && name=='${searchTerm}']._id  || about match '${searchTerm}*']{
+    category,
         image{
           asset->{
             url
@@ -195,6 +180,7 @@ export const searchQuery = (searchTerm) => {
 
 export const searchWithLimitQuery = (searchTerm, limit) => {
   const query = `*[_type == "pin" && title match '${searchTerm}*' || category._ref in *[_type=="category" && name=='${searchTerm}']._id  || about match '${searchTerm}*'][0...${limit}]{
+    category,
         image{
           asset->{
             url
@@ -226,6 +212,7 @@ export const userQuery = (userId) => {
 
 export const userCreatedPinsQuery = (userId) => {
   const query = `*[ _type == 'pin' && userId == '${userId}'] | order(_createdAt desc){
+    category,
     image{
       asset->{
         url
@@ -251,6 +238,7 @@ export const userCreatedPinsQuery = (userId) => {
 
 export const userSavedPinsQuery = (userId) => {
   const query = `*[_type == 'pin' && '${userId}' in save[].userId ] | order(_createdAt desc) {
+    category,
     image{
       asset->{
         url

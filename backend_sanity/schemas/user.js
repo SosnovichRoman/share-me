@@ -15,11 +15,6 @@ export default {
       type: 'string',
     },
     {
-      name: 'number',
-      title: 'Number',
-      type: 'number',
-    },
-    {
       name: 'favoriteCategories',
       title: 'FavoriteCategories',
       type: 'array',

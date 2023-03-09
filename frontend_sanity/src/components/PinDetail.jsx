@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { client, urlFor } from '../client';
 import MasonryLayout from './MasonryLayout';
-import { pinDetailMorePinQuery, pinDetailQuery } from '../utils/data';
+import { pinDetailMorePinQuery, pinDetailQuery, userQuery } from '../utils/data';
 import Spinner from './Spinner';
 
 const PinDetail = ({ user }) => {
@@ -14,6 +14,7 @@ const PinDetail = ({ user }) => {
   const [pinDetail, setPinDetail] = useState();
   const [comment, setComment] = useState('');
   const [addingComment, setAddingComment] = useState(false);
+  const pinDetailRate = 2;
 
   const fetchPinDetails = () => {
     const query = pinDetailQuery(pinId);
@@ -38,21 +39,48 @@ const PinDetail = ({ user }) => {
   }, [pinId, user]);
 
   const updateRating = (categoryId) => {
-    console.log("Start update rating");
-    console.log("categoryId: ", categoryId);
-    if(user){
-      console.log("query", `favoriteCategories[category._ref == '${categoryId}'].rate`);
-      client
-      .patch(user?._id)
-      // .setIfMissing({ favoriteCategories: [{rate: 0, category: {type: 'reference', _ref: `'${categoryId}'`}}] })
-      // .inc({ [`favoriteCategories[category._ref == '${categoryId}'][0].rate`]: 5 })
-      .inc({ [ `favoriteCategories[category._ref == "${categoryId}"].rate` ]: 5 })
-      .commit()
-      .then(() => {
-        console.log("End update rating");
-      });
-    }
+    if (user) {
+      console.log(user);
+      let shouldAppend = true;
 
+      client.fetch(userQuery(user?._id)).then((userData) =>{
+        userData[0]?.favoriteCategories?.map((favCategory) => {
+          console.log(favCategory.category._ref, categoryId);
+          if(favCategory.category._ref === categoryId){
+            shouldAppend = false;
+            console.log("should false");
+          } 
+          console.log("--");
+        })
+        // Append new item of favorite category if necessary
+        if(shouldAppend){
+          client
+          .patch(user?._id)
+          .insert('after', 'favoriteCategories[-1]', [{category: {_ref: categoryId, _type: "reference"}, rate: 0}])
+          .commit({autoGenerateArrayKeys: true})
+          .then(() => {
+            incrementRating(categoryId);
+          })
+          .catch((err) => {
+            console.error('Insert field to favorite rating failed: ', err.message)
+          });
+        }
+        else incrementRating(categoryId);
+      })
+    }
+  }
+
+  const incrementRating = (categoryId) =>{
+    client
+    .patch(user?._id)
+    .inc({ [ `favoriteCategories[category._ref == "${categoryId}"].rate` ]: pinDetailRate })
+    .commit()
+    .then(() => {
+      console.log("End update rating");
+    })
+    .catch((err) => {
+      console.error('Update failed: ', err.message)
+    });
   }
 
   const addComment = () => {

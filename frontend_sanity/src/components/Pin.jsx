@@ -13,9 +13,10 @@ const Pin = ({ pin }) => {
 
   const navigate = useNavigate();
 
-  const { postedBy, image, _id, destination } = pin;
+  const { postedBy, image, _id, destination, category } = pin;
 
   const user = localStorage.getItem('user') !== 'undefined' ? JSON.parse(localStorage.getItem('user')) : localStorage.clear();
+  const pinSaveRate = 5;
 
   const deletePin = (id) => {
     client
@@ -46,11 +47,32 @@ const Pin = ({ pin }) => {
         }])
         .commit()
         .then(() => {
-          window.location.reload();
+          //window.location.reload();
           setSavingPost(false);
+          console.log(category._ref);
+          console.log(pin);
+          updateRating(category._ref);
         });
     }
   };
+
+  const updateRating = (categoryId) => {
+    if(user){
+      console.log(user);
+      client
+      .patch(user?.id)
+      .setIfMissing({ [ `favoriteCategories[category._ref == "${categoryId}"].rate` ]: 0 })
+      .inc({ [ `favoriteCategories[category._ref == "${categoryId}"].rate` ]: pinSaveRate })
+      .commit()
+      .then(() => {
+        console.log("End update rating");
+        window.location.reload();
+      })
+      .catch((err) => {
+        console.error('Update failed: ', err.message)
+      });
+    }
+  }
 
   return (
     <div className="m-2">

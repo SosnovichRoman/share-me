@@ -1,7 +1,6 @@
 import React from 'react';
 import axios from 'axios';
 import { googleLogout, useGoogleLogin, } from '@react-oauth/google';
-import { GoogleLogout, useGoogleLogout } from 'react-google-login';
 
 import { AiOutlineLogout } from 'react-icons/ai';
 // import GoogleLogin from 'react-google-login';

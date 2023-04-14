@@ -51,6 +51,9 @@
 // ];
 
 export const categoriesQuery = `*[_type == "category"]`;
+export const paintTypesQuery = `*[_type == "paintTypes"]`;
+export const canvasTypesQuery = `*[_type == "canvasTypes"]`;
+export const borderTypesQuery = `*[_type == "borderTypes"]`;
 
 export const favoriteCategoriesQuery = (userId, categoryId) =>{
   const query = `*[_type == "user" && _id == '${userId}' ]{

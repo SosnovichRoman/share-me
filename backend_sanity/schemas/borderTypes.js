@@ -4,8 +4,8 @@ export default {
     type: 'document',
     fields: [
       {
-        name: 'borderType',
-        title: 'Border Type',
+        name: 'name',
+        title: 'Name',
         type: 'string',
       },
       {

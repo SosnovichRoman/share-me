@@ -4,8 +4,8 @@ export default {
     type: 'document',
     fields: [
       {
-        name: 'paintType',
-        title: 'Paint Type',
+        name: 'name',
+        title: 'Name',
         type: 'string',
       },
       {

@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { MdDelete } from 'react-icons/md';
 
 // import { categories } from '../utils/data';
-import { categoriesQuery } from '../utils/data';
+import { categoriesQuery, paintTypesQuery, canvasTypesQuery, borderTypesQuery } from '../utils/data';
 import { client } from '../client';
 import Spinner from './Spinner';
 
@@ -15,9 +15,17 @@ const CreatePin = ({ user }) => {
   const [destination, setDestination] = useState();
   const [fields, setFields] = useState();
   const [category, setCategory] = useState();
+  const [paintType, setPaintType] = useState([]);
+  const [canvasType, setCanvasType] = useState([]);
+  const [borderType, setBorderType] = useState([]);
+
   const [imageAsset, setImageAsset] = useState();
   const [wrongImageType, setWrongImageType] = useState(false);
+
   const [categories, setCategories] = useState([]);
+  const [paintTypes, setPaintTypes] = useState([]);
+  const [canvasTypes, setCanvasTypes] = useState([]);
+  const [borderTypes, setBorderTypes] = useState([]);
 
   const navigate = useNavigate();
 
@@ -46,7 +54,18 @@ const CreatePin = ({ user }) => {
     client.fetch(categoriesQuery).then((data) => {
       setCategories(data);
     });
-  })
+    client.fetch(paintTypesQuery).then((data) => {
+      setPaintTypes(data);
+    });
+    client.fetch(canvasTypesQuery).then((data) => {
+      setCanvasTypes(data);
+    });
+    client.fetch(borderTypesQuery).then((data) => {
+      setBorderTypes(data);
+    });
+  }, [])
+
+  console.log(categories)
 
   const savePin = () => {
     if (title && about && destination && imageAsset?._id && category) {
@@ -67,7 +86,10 @@ const CreatePin = ({ user }) => {
           _type: 'postedBy',
           _ref: user._id,
         },
-        category,
+        category: {_ref : category},
+        paintType: {_ref : paintType},
+        canvasType: {_ref : canvasType},
+        borderType: {_ref : borderType},
       };
       client.create(doc).then(() => {
         navigate('/');
@@ -174,7 +196,7 @@ const CreatePin = ({ user }) => {
             className="outline-none text-base sm:text-lg border-b-2 border-gray-200 p-2"
           />
 
-          <div className="flex flex-col">
+          <div className="flex flex-col gap-5">
             <div>
               <p className="mb-2 font-semibold text:lg sm:text-xl">Choose Pin Category</p>
               <select
@@ -186,13 +208,64 @@ const CreatePin = ({ user }) => {
                 <option value="others" className="sm:text-bg bg-white">Select Category</option>
                 (categories.length != 0) && (
                 {categories.map((item) => (
-                  <option className="text-base border-0 outline-none capitalize bg-white text-black " key={item.name} value={item.name}>
+                  <option className="text-base border-0 outline-none capitalize bg-white text-black " key={item.name} value={item._id}>
                     {item.name}
                   </option>
                 ))})
               </select>
             </div>
-            <div className="flex justify-end items-end mt-5">
+            <div>
+              <p className="mb-2 font-semibold text:lg sm:text-xl">Choose Pin Paint Type</p>
+              <select
+                onChange={(e) => {
+                  setPaintType(e.target.value);
+                }}
+                className="outline-none w-4/5 text-base border-b-2 border-gray-200 p-2 rounded-md cursor-pointer"
+              >
+                <option value="others" className="sm:text-bg bg-white">Select Paint Type</option>
+                (paintTypes.length != 0) && (
+                {paintTypes.map((item) => (
+                  <option className="text-base border-0 outline-none capitalize bg-white text-black " key={item.name} value={item._id}>
+                    {item.name}
+                  </option>
+                ))})
+              </select>
+            </div>
+            <div>
+              <p className="mb-2 font-semibold text:lg sm:text-xl">Choose Pin Canvas Type</p>
+              <select
+                onChange={(e) => {
+                  setCanvasType(e.target.value);
+                }}
+                className="outline-none w-4/5 text-base border-b-2 border-gray-200 p-2 rounded-md cursor-pointer"
+              >
+                <option value="others" className="sm:text-bg bg-white">Select Canvas Type</option>
+                (canvasTypes.length != 0) && (
+                {canvasTypes.map((item) => (
+                  <option className="text-base border-0 outline-none capitalize bg-white text-black " key={item.name} value={item._id}>
+                    {item.name}
+                  </option>
+                ))})
+              </select>
+            </div>
+            <div>
+              <p className="mb-2 font-semibold text:lg sm:text-xl">Choose Pin Border Type</p>
+              <select
+                onChange={(e) => {
+                  setBorderType(e.target.value);
+                }}
+                className="outline-none w-4/5 text-base border-b-2 border-gray-200 p-2 rounded-md cursor-pointer"
+              >
+                <option value="others" className="sm:text-bg bg-white">Select Border Type</option>
+                (borderTypes.length != 0) && (
+                {borderTypes.map((item) => (
+                  <option className="text-base border-0 outline-none capitalize bg-white text-black " key={item.name} value={item._id}>
+                    {item.name}
+                  </option>
+                ))})
+              </select>
+            </div>
+            <div className="flex justify-end items-end">
               <button
                 type="button"
                 onClick={savePin}

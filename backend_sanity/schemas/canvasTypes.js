@@ -4,8 +4,8 @@ export default {
     type: 'document',
     fields: [
       {
-        name: 'canvasType',
-        title: 'Canvas Type',
+        name: 'name',
+        title: 'Name',
         type: 'string',
       },
       {

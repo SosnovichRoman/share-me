@@ -19,6 +19,34 @@ export default {
       type: 'url',
     },
     {
+      name: 'width',
+      title: 'Width',
+      type: 'number',
+    },
+    {
+      name: 'height',
+      title: 'Height',
+      type: 'number',
+    },
+    {
+      name: 'paintType',
+      title: 'Paint type',
+      type: 'reference',
+      to: [{ type: 'paintTypes' }],
+    },
+    {
+      name: 'canvasType',
+      title: 'Canvas Type',
+      type: 'reference',
+      to: [{ type: 'canvasTypes' }],
+    },
+    {
+      name: 'borderType',
+      title: 'Border Type',
+      type: 'reference',
+      to: [{ type: 'borderTypes' }],
+    },
+    {
       name: 'category',
       title: 'Category',
       type: 'reference',

@@ -4,7 +4,7 @@ import { googleLogout, useGoogleLogin, } from '@react-oauth/google';
 
 import { AiOutlineLogout } from 'react-icons/ai';
 // import GoogleLogin from 'react-google-login';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FcGoogle } from 'react-icons/fc';
 import shareVideo from '../assets/share.mp4';
 import logo from '../assets/logowhite.png';
@@ -60,8 +60,8 @@ const Login = () => {
                     autoPlay
                     className="w-full h-full object-cover"
                 />
-                <div className="absolute flex flex-col justify-center items-center top-0 right-0 left-0 bottom-0    bg-blackOverlay">
-                    <div className="p-5">
+                <div className="absolute flex flex-col gap-5 justify-center items-center top-0 right-0 left-0 bottom-0    bg-blackOverlay">
+                    <div className="">
                         <img src={logo} width="130px" />
                     </div>
                     <div className="shadow-2xl">
@@ -72,6 +72,9 @@ const Login = () => {
                         >
                             <FcGoogle className="mr-4" /> Sign in with google
                         </button>
+                    </div>
+                    <div className="shadow-2xl bg-mainColor flex justify-center items-center p-3 rounded-lg cursor-pointer outline-none">
+                        <Link to="/">Enter without login</Link>
                     </div>
                 </div>
             </div>

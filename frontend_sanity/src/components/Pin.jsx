@@ -62,44 +62,44 @@ const Pin = ({ pin }) => {
       console.log(user);
       let shouldAppend = true;
 
-      client.fetch(userQuery(user?.id)).then((userData) =>{
+      client.fetch(userQuery(user?.id)).then((userData) => {
         userData[0]?.favoriteCategories?.map((favCategory) => {
           console.log(favCategory.category._ref, categoryId);
-          if(favCategory.category._ref === categoryId){
+          if (favCategory.category._ref === categoryId) {
             shouldAppend = false;
             console.log("should false");
-          } 
+          }
           console.log("--");
         })
         // Append new item of favorite category if necessary
-        if(shouldAppend){
+        if (shouldAppend) {
           client
-          .patch(user?._id)
-          .insert('after', 'favoriteCategories[-1]', [{category: {_ref: categoryId, _type: "reference"}, rate: 0}])
-          .commit({autoGenerateArrayKeys: true})
-          .then(() => {
-            incrementRating(categoryId);
-          })
-          .catch((err) => {
-            console.error('Insert field to favorite rating failed: ', err.message)
-          });
+            .patch(user?._id)
+            .insert('after', 'favoriteCategories[-1]', [{ category: { _ref: categoryId, _type: "reference" }, rate: 0 }])
+            .commit({ autoGenerateArrayKeys: true })
+            .then(() => {
+              incrementRating(categoryId);
+            })
+            .catch((err) => {
+              console.error('Insert field to favorite rating failed: ', err.message)
+            });
         }
         else incrementRating(categoryId);
       })
     }
   }
 
-  const incrementRating = (categoryId) =>{
+  const incrementRating = (categoryId) => {
     client
-    .patch(user?.id)
-    .inc({ [ `favoriteCategories[category._ref == "${categoryId}"].rate` ]: pinSaveRate })
-    .commit()
-    .then(() => {
-      console.log("End update rating");
-    })
-    .catch((err) => {
-      console.error('Update failed: ', err.message)
-    });
+      .patch(user?.id)
+      .inc({ [`favoriteCategories[category._ref == "${categoryId}"].rate`]: pinSaveRate })
+      .commit()
+      .then(() => {
+        console.log("End update rating");
+      })
+      .catch((err) => {
+        console.error('Update failed: ', err.message)
+      });
   }
 
   return (
@@ -129,7 +129,7 @@ const Pin = ({ pin }) => {
                 ><MdDownloadForOffline />
                 </a>
               </div>
-              {alreadySaved?.length !== 0 ? (
+              {user && (alreadySaved?.length !== 0 ? (
                 <button type="button" className="bg-red-500 opacity-70 hover:opacity-100 text-white font-bold px-5 py-1 text-base rounded-3xl hover:shadow-md outline-none">
                   {pin?.save?.length}  Saved
                 </button>
@@ -144,7 +144,7 @@ const Pin = ({ pin }) => {
                 >
                   {pin?.save?.length}   {savingPost ? 'Saving' : 'Save'}
                 </button>
-              )}
+              ))}
             </div>
             <div className=" flex justify-between items-center gap-2 w-full">
               {destination?.slice(8).length > 0 ? (

@@ -43,44 +43,44 @@ const PinDetail = ({ user }) => {
       console.log(user);
       let shouldAppend = true;
 
-      client.fetch(userQuery(user?._id)).then((userData) =>{
+      client.fetch(userQuery(user?._id)).then((userData) => {
         userData[0]?.favoriteCategories?.map((favCategory) => {
           console.log(favCategory.category._ref, categoryId);
-          if(favCategory.category._ref === categoryId){
+          if (favCategory.category._ref === categoryId) {
             shouldAppend = false;
             console.log("should false");
-          } 
+          }
           console.log("--");
         })
         // Append new item of favorite category if necessary
-        if(shouldAppend){
+        if (shouldAppend) {
           client
-          .patch(user?._id)
-          .insert('after', 'favoriteCategories[-1]', [{category: {_ref: categoryId, _type: "reference"}, rate: 0}])
-          .commit({autoGenerateArrayKeys: true})
-          .then(() => {
-            incrementRating(categoryId);
-          })
-          .catch((err) => {
-            console.error('Insert field to favorite rating failed: ', err.message)
-          });
+            .patch(user?._id)
+            .insert('after', 'favoriteCategories[-1]', [{ category: { _ref: categoryId, _type: "reference" }, rate: 0 }])
+            .commit({ autoGenerateArrayKeys: true })
+            .then(() => {
+              incrementRating(categoryId);
+            })
+            .catch((err) => {
+              console.error('Insert field to favorite rating failed: ', err.message)
+            });
         }
         else incrementRating(categoryId);
       })
     }
   }
 
-  const incrementRating = (categoryId) =>{
+  const incrementRating = (categoryId) => {
     client
-    .patch(user?._id)
-    .inc({ [ `favoriteCategories[category._ref == "${categoryId}"].rate` ]: pinDetailRate })
-    .commit()
-    .then(() => {
-      console.log("End update rating");
-    })
-    .catch((err) => {
-      console.error('Update failed: ', err.message)
-    });
+      .patch(user?._id)
+      .inc({ [`favoriteCategories[category._ref == "${categoryId}"].rate`]: pinDetailRate })
+      .commit()
+      .then(() => {
+        console.log("End update rating");
+      })
+      .catch((err) => {
+        console.error('Update failed: ', err.message)
+      });
   }
 
   const addComment = () => {
@@ -158,25 +158,28 @@ const PinDetail = ({ user }) => {
                 </div>
               ))}
             </div>
-            <div className="flex flex-wrap mt-6 gap-3">
-              <Link to={`/user-profile/${user?._id}`}>
-                <img src={user?.image} className="w-10 h-10 rounded-full cursor-pointer" alt="user-profile" />
-              </Link>
-              <input
-                className=" flex-1 border-gray-100 outline-none border-2 p-2 rounded-2xl focus:border-gray-300"
-                type="text"
-                placeholder="Add a comment"
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
-              />
-              <button
-                type="button"
-                className="bg-red-500 text-white rounded-full px-6 py-2 font-semibold text-base outline-none"
-                onClick={addComment}
-              >
-                {addingComment ? 'Doing...' : 'Done'}
-              </button>
-            </div>
+            {user &&
+              <div className="flex flex-wrap mt-6 gap-3">
+                <Link to={`/user-profile/${user?._id}`}>
+                  <img src={user?.image} className="w-10 h-10 rounded-full cursor-pointer" alt="user-profile" />
+                </Link>
+                <input
+                  className=" flex-1 border-gray-100 outline-none border-2 p-2 rounded-2xl focus:border-gray-300"
+                  type="text"
+                  placeholder="Add a comment"
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                />
+                <button
+                  type="button"
+                  className="bg-red-500 text-white rounded-full px-6 py-2 font-semibold text-base outline-none"
+                  onClick={addComment}
+                >
+                  {addingComment ? 'Doing...' : 'Done'}
+                </button>
+              </div>
+            }
+
           </div>
         </div>
       )}

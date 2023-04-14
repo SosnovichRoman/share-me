@@ -76,7 +76,7 @@ const UserProfile = () => {
             {user.userName}
           </h1>
           <div className="absolute top-0 z-1 right-0 p-2">
-            {userId === User.id && (
+            {userId === User?.id && (
 
               <button
                 type="button"

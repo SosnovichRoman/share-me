@@ -63,6 +63,16 @@ export default {
       to: [{ type: 'category' }],
     },
     {
+      name: 'customPrice',
+      title: 'Custom Price',
+      type: 'boolean',
+    },
+    {
+      name: 'price',
+      title: 'Price',
+      type: 'number',
+    },
+    {
       name: 'image',
       title: 'Image',
       type: 'image',

@@ -55,7 +55,24 @@ export const paintTypesQuery = `*[_type == "paintTypes"]`;
 export const canvasTypesQuery = `*[_type == "canvasTypes"]`;
 export const borderTypesQuery = `*[_type == "borderTypes"]`;
 
-export const favoriteCategoriesQuery = (userId, categoryId) =>{
+export const paintTypesPriceQuery = (name) => {
+  const query = `*[_type == "paintTypes" && name == "${name}"]`;
+  return query;
+}
+export const canvasTypesPriceQuery = (name) => {
+  const query = `*[_type == "canvasTypes" && name == "${name}"]`;
+  return query;
+}
+export const borderTypesPriceQuery = (name) => {
+  const query = `*[_type == "borderTypes" && name == "${name}"]`;
+  return query;
+}
+export const categoryPriceQuery = (id) => {
+  const query = `*[_type == "category" && _id == "${id}"]`;
+  return query;
+}
+
+export const favoriteCategoriesQuery = (userId, categoryId) => {
   const query = `*[_type == "user" && _id == '${userId}' ]{
     favoriteCategories[category._ref == "${categoryId}"]{
       category,
@@ -107,6 +124,8 @@ export const pinDetailQuery = (pinId) => {
     paintType->{name},
     canvasType->{name},
     borderType->{name},
+    customPrice,
+    price,
     category,
     destination,
     postedBy->{

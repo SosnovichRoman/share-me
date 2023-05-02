@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { client, urlFor } from '../client';
 import MasonryLayout from './MasonryLayout';
-import { pinDetailMorePinQuery, pinDetailQuery, userQuery } from '../utils/data';
+import { paintTypesPriceQuery, canvasTypesPriceQuery, borderTypesPriceQuery, categoryPriceQuery, pinDetailMorePinQuery, pinDetailQuery, userQuery } from '../utils/data';
 import Spinner from './Spinner';
 
 const PinDetail = ({ user }) => {
@@ -21,7 +21,9 @@ const PinDetail = ({ user }) => {
 
 		if (query) {
 			client.fetch(`${query}`).then((data) => {
-				setPinDetail(data[0]);
+				if(!data[0]?.customPrice) calculatePrice(data[0])
+				else setPinDetail(data[0]);
+				
 				console.log(data);
 				updateRating(data[0]?.category?._ref);
 				if (data[0]) {
@@ -37,6 +39,36 @@ const PinDetail = ({ user }) => {
 	useEffect(() => {
 		fetchPinDetails();
 	}, [pinId, user]);
+
+	const calculatePrice = (pin) =>{
+		let paintTypePrice = 0;
+		let canvasTypePrice = 0;
+		let borderTypePrice = 0;
+		let categoryPrice = 0;
+		let calculatedPrice = 0;
+
+		const width = pin.width;
+		const height = pin.height;
+
+		const paintPromise = client.fetch(paintTypesPriceQuery(pin.paintType.name)).then((data) =>{
+			paintTypePrice = data[0].price;
+		});
+		const canvasPromise = client.fetch(canvasTypesPriceQuery(pin.canvasType.name)).then((data) =>{
+			canvasTypePrice = data[0].price;
+		})
+		const borderPromise = client.fetch(borderTypesPriceQuery(pin.borderType.name)).then((data) =>{
+			borderTypePrice = data[0].price;
+		})
+		const categoryPromise = client.fetch(categoryPriceQuery(pin.category._ref)).then((data) =>{
+			categoryPrice = data[0].price;
+		})
+
+		Promise.all([paintPromise, canvasPromise, borderPromise, categoryPromise]).then(() => {
+			calculatedPrice = ((width * height * paintTypePrice) + (width * height * canvasTypePrice) + ((width + height) * 2 * borderTypePrice) + (pin.time * pin.timePrice)) * categoryPrice;
+			pin.price = calculatedPrice;
+			setPinDetail(pin);
+		});
+	}
 
 	const updateRating = (categoryId) => {
 		if (user) {
@@ -144,6 +176,7 @@ const PinDetail = ({ user }) => {
 							<p>Paint type: {pinDetail.paintType.name}</p>
 							<p>Canvas type: {pinDetail.canvasType.name}</p>
 							<p>Border type: {pinDetail.borderType.name}</p>
+							<h2 className='text-3xl font-semibold py-4'>Price: {pinDetail.price}</h2>
 						</div>
 						<Link to={`/user-profile/${pinDetail?.postedBy._id}`} className="flex gap-2 mt-5 items-center bg-white rounded-lg ">
 							<img src={pinDetail?.postedBy.image} className="w-10 h-10 rounded-full" alt="user-profile" />

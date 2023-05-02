@@ -31,6 +31,10 @@ const CreatePin = ({ user }) => {
   const [canvasTypes, setCanvasTypes] = useState([]);
   const [borderTypes, setBorderTypes] = useState([]);
 
+  const [customPrice, setCustomPrice] = useState(false);
+  const [price, setPrice] = useState('');
+  console.log(customPrice, "pr");
+
   const navigate = useNavigate();
 
   const uploadImage = (e) => {
@@ -98,6 +102,8 @@ const CreatePin = ({ user }) => {
         paintType: { _ref: paintType },
         canvasType: { _ref: canvasType },
         borderType: { _ref: borderType },
+        customPrice: customPrice,
+        price: Number(price),
       };
       client.create(doc).then(() => {
         navigate('/');
@@ -235,6 +241,7 @@ const CreatePin = ({ user }) => {
               placeholder="Enter height"
               className="outline-none text-base sm:text-lg border-b-2 border-gray-200 p-2"
             />
+
           </div>
           <div className="flex flex-col gap-5">
             <div>
@@ -304,6 +311,20 @@ const CreatePin = ({ user }) => {
                   </option>
                 ))})
               </select>
+            </div>
+            <div className=''>
+              <div className="flex items-center mb-4">
+                <label htmlFor="customPrice" className="mr-2 font-semibold text:lg sm:text-xl">Set Custom Price</label>
+                <input id="customPrice" type="checkbox" value={customPrice} onChange={(e) => setCustomPrice(e.target.checked)} className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded" />
+              </div>
+              <input
+                disabled={!customPrice}
+                type="number"
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+                placeholder="Enter price"
+                className="outline-none text-base sm:text-lg border-b-2 border-gray-200 p-2"
+              />
             </div>
 
             <div className="flex justify-end items-end">

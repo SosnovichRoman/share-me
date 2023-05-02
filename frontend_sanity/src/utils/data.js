@@ -100,6 +100,13 @@ export const pinDetailQuery = (pinId) => {
     _id,
     title, 
     about,
+    width,
+    height,
+    time,
+    timePrice,
+    paintType->{name},
+    canvasType->{name},
+    borderType->{name},
     category,
     destination,
     postedBy->{

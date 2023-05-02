@@ -11,6 +11,10 @@ import Spinner from './Spinner';
 const CreatePin = ({ user }) => {
   const [title, setTitle] = useState('');
   const [about, setAbout] = useState('');
+  const [width, setWidth] = useState(null);
+  const [height, setHeight] = useState(null);
+  const [time, setTime] = useState(null);
+  const [timePrice, setTimePrice] = useState(null);
   const [loading, setLoading] = useState(false);
   const [destination, setDestination] = useState();
   const [fields, setFields] = useState();
@@ -68,12 +72,16 @@ const CreatePin = ({ user }) => {
   console.log(categories)
 
   const savePin = () => {
-    if (title && about && destination && imageAsset?._id && category) {
+    if (title && about && destination && imageAsset?._id && category && width && height && time && timePrice) {
       const doc = {
         _type: 'pin',
         title,
         about,
         destination,
+        width: Number(width),
+        height: Number(height),
+        time: Number(time),
+        timePrice: Number(timePrice),
         image: {
           _type: 'image',
           asset: {
@@ -86,10 +94,10 @@ const CreatePin = ({ user }) => {
           _type: 'postedBy',
           _ref: user._id,
         },
-        category: {_ref : category},
-        paintType: {_ref : paintType},
-        canvasType: {_ref : canvasType},
-        borderType: {_ref : borderType},
+        category: { _ref: category },
+        paintType: { _ref: paintType },
+        canvasType: { _ref: canvasType },
+        borderType: { _ref: borderType },
       };
       client.create(doc).then(() => {
         navigate('/');
@@ -196,6 +204,38 @@ const CreatePin = ({ user }) => {
             className="outline-none text-base sm:text-lg border-b-2 border-gray-200 p-2"
           />
 
+          <div className='flex flex-col sm:flex-row gap-5'>
+            <input
+              type="number"
+              value={time}
+              onChange={(e) => setTime(e.target.value)}
+              placeholder="Enter spended time"
+              className="outline-none text-base sm:text-lg border-b-2 border-gray-200 p-2"
+            />
+            <input
+              type="number"
+              value={timePrice}
+              onChange={(e) => setTimePrice(e.target.value)}
+              placeholder="Enter your time price"
+              className="outline-none text-base sm:text-lg border-b-2 border-gray-200 p-2"
+            />
+          </div>
+          <div className='flex flex-col sm:flex-row gap-5'>
+            <input
+              type="number"
+              value={width}
+              onChange={(e) => setWidth(e.target.value)}
+              placeholder="Enter width"
+              className="outline-none text-base sm:text-lg border-b-2 border-gray-200 p-2"
+            />
+            <input
+              type="number"
+              value={height}
+              onChange={(e) => setHeight(e.target.value)}
+              placeholder="Enter height"
+              className="outline-none text-base sm:text-lg border-b-2 border-gray-200 p-2"
+            />
+          </div>
           <div className="flex flex-col gap-5">
             <div>
               <p className="mb-2 font-semibold text:lg sm:text-xl">Choose Pin Category</p>
@@ -265,6 +305,7 @@ const CreatePin = ({ user }) => {
                 ))})
               </select>
             </div>
+
             <div className="flex justify-end items-end">
               <button
                 type="button"

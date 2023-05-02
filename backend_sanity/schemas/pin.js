@@ -29,6 +29,16 @@ export default {
       type: 'number',
     },
     {
+      name: 'time',
+      title: 'Time',
+      type: 'number',
+    },
+    {
+      name: 'timePrice',
+      title: 'Time Price',
+      type: 'number',
+    },
+    {
       name: 'paintType',
       title: 'Paint type',
       type: 'reference',

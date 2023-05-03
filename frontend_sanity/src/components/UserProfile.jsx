@@ -30,17 +30,29 @@ const UserProfile = () => {
   const handleOrder = (e) => {
     e.preventDefault();
     setSubmitted(true);
-    const orderInfo = {
-      orderName,
-      orderPhone,
-      orderAddress
-    }
 
+
+    let orderInfo = JSON.stringify({
+      orderName: orderName,
+      orderPhone: orderPhone,
+      orderAddress: orderAddress, 
+      pins: pins,
+    });
+
+
+    let request = new XMLHttpRequest();
+    // посылаем запрос на адрес "/user"
+    request.open('POST', 'http://localhost:3001/email', true);
+    request.setRequestHeader(
+      'Content-Type',
+      'application/json'
+    );
+    request.send(orderInfo);
 
     console.log(orderInfo);
   }
 
- 
+
 
   useEffect(() => {
     const query = userQuery(userId);
@@ -187,11 +199,12 @@ const UserProfile = () => {
               />
               <button
                 type="submit"
-                disabled={submitted}
+                disabled={submitted || !pins}
                 className={`text-white font-bold p-2 rounded-full w-36 outline-none ${submitted ? 'bg-red-400' : 'bg-red-500'}`}
               >
-                {submitted && <span>Done!</span>}
-                {!submitted && <span>Make an order</span>}
+                {submitted && pins && <span>Done!</span>}
+                {!submitted && pins && <span>Make an order</span>}
+                {!pins && <span>Cart is empty</span>}
               </button>
             </form>
           </div>

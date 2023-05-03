@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { AiOutlineLogout } from 'react-icons/ai';
+import { AiOutlineLogout, AiOutlineShoppingCart } from 'react-icons/ai';
 import { useParams, useNavigate } from 'react-router-dom';
+import { HiShoppingCart } from 'react-icons/hi'
 
 import { userCreatedPinsQuery, userQuery, userSavedPinsQuery } from '../utils/data';
 import { client } from '../client';
@@ -8,8 +9,8 @@ import MasonryLayout from './MasonryLayout';
 import Spinner from './Spinner';
 import { googleLogout } from '@react-oauth/google';
 
-const activeBtnStyles = 'bg-red-500 text-white font-bold p-2 rounded-full w-20 outline-none';
-const notActiveBtnStyles = 'bg-primary mr-4 text-black font-bold p-2 rounded-full w-20 outline-none';
+const activeBtnStyles = 'bg-red-500 text-white font-bold p-2 rounded-full w-32 outline-none';
+const notActiveBtnStyles = 'bg-primary mr-4 text-black font-bold p-2 rounded-full w-32 outline-none';
 
 const UserProfile = () => {
   const [user, setUser] = useState();
@@ -21,7 +22,25 @@ const UserProfile = () => {
 
   const User = localStorage.getItem('user') !== 'undefined' ? JSON.parse(localStorage.getItem('user')) : localStorage.clear();
 
-  console.log(process.env.REACT_APP_GOOGLE_API_TOKEN);
+  const [orderName, setOrderName] = useState('');
+  const [orderPhone, setOrderPhone] = useState('');
+  const [orderAddress, setOrderAddress] = useState('');
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleOrder = (e) => {
+    e.preventDefault();
+    setSubmitted(true);
+    const orderInfo = {
+      orderName,
+      orderPhone,
+      orderAddress
+    }
+
+
+    console.log(orderInfo);
+  }
+
+ 
 
   useEffect(() => {
     const query = userQuery(userId);
@@ -31,7 +50,7 @@ const UserProfile = () => {
   }, [userId]);
 
   useEffect(() => {
-    if (text === 'Created') {
+    if (text === 'My pictures') {
       const createdPinsQuery = userCreatedPinsQuery(userId);
 
       client.fetch(createdPinsQuery).then((data) => {
@@ -81,7 +100,7 @@ const UserProfile = () => {
               <button
                 type="button"
                 className=" bg-white p-2 rounded-full cursor-pointer outline-none shadow-md"
-              onClick={() => {logout()}}
+                onClick={() => { logout() }}
 
               >
                 <AiOutlineLogout color="red" fontSize={21} />
@@ -115,7 +134,7 @@ const UserProfile = () => {
             }}
             className={`${activeBtn === 'created' ? activeBtnStyles : notActiveBtnStyles}`}
           >
-            Created
+            My pictures
           </button>
           <button
             type="button"
@@ -125,7 +144,7 @@ const UserProfile = () => {
             }}
             className={`${activeBtn === 'saved' ? activeBtnStyles : notActiveBtnStyles}`}
           >
-            Saved
+            Shopping cart
           </button>
         </div>
 
@@ -138,6 +157,47 @@ const UserProfile = () => {
             No Pins Found!
           </div>
         )}
+        {text === "Shopping cart" && <div className='py-20 px-5'>
+          <div className='max-w-[1200px] mx-auto'>
+            <h2 className='text-4xl font-bold flex gap-10 items-center'>Make an order<HiShoppingCart /> </h2>
+            <form onSubmit={(e) => handleOrder(e)} className='mt-10 space-y-5 flex flex-col'>
+              <input
+                type="text"
+                value={orderName}
+                onChange={(e) => setOrderName(e.target.value)}
+                placeholder="Enter your name"
+                className="outline-none text-base sm:text-lg border-b-2 border-gray-200 p-2"
+                required
+              />
+              <input
+                type="text"
+                value={orderPhone}
+                onChange={(e) => setOrderPhone(e.target.value)}
+                placeholder="Enter your phone number"
+                className="outline-none text-base sm:text-lg border-b-2 border-gray-200 p-2"
+                required
+              />
+              <input
+                type="text"
+                value={orderAddress}
+                onChange={(e) => setOrderAddress(e.target.value)}
+                placeholder="Enter your address"
+                className="outline-none text-base sm:text-lg border-b-2 border-gray-200 p-2"
+                required
+              />
+              <button
+                type="submit"
+                disabled={submitted}
+                className={`text-white font-bold p-2 rounded-full w-36 outline-none ${submitted ? 'bg-red-400' : 'bg-red-500'}`}
+              >
+                {submitted && <span>Done!</span>}
+                {!submitted && <span>Make an order</span>}
+              </button>
+            </form>
+          </div>
+        </div>}
+
+
       </div>
 
     </div>

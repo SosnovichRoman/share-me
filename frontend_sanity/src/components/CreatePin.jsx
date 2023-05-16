@@ -5,6 +5,7 @@ import { MdDelete } from 'react-icons/md';
 
 // import { categories } from '../utils/data';
 import { categoriesQuery, paintTypesQuery, canvasTypesQuery, borderTypesQuery } from '../utils/data';
+import { paintTypesPriceQuery, canvasTypesPriceQuery, borderTypesPriceQuery, categoryPriceQuery, pinDetailMorePinQuery, pinDetailQuery, userQuery } from '../utils/data';
 import { client } from '../client';
 import Spinner from './Spinner';
 
@@ -16,7 +17,7 @@ const CreatePin = ({ user }) => {
   const [time, setTime] = useState(null);
   const [timePrice, setTimePrice] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [destination, setDestination] = useState();
+
   const [fields, setFields] = useState();
   const [category, setCategory] = useState();
   const [paintType, setPaintType] = useState([]);
@@ -31,9 +32,53 @@ const CreatePin = ({ user }) => {
   const [canvasTypes, setCanvasTypes] = useState([]);
   const [borderTypes, setBorderTypes] = useState([]);
 
-  const [customPrice, setCustomPrice] = useState(false);
+
+  const [recomendedPrice, setRecomendedPrice] = useState(0);
   const [price, setPrice] = useState('');
-  console.log(customPrice, "pr");
+
+  const pin = {
+    title, about, width, height, time, timePrice, category, paintType, canvasType, borderType
+  }
+
+  console.log(pin)
+
+  useEffect(() => {
+    if(title && about && width && height && time && timePrice && category && paintType && canvasType && borderType){
+      calculatePrice(pin);
+    }
+  }, [pin])
+  
+
+  const calculatePrice = (pin) => {
+    let paintTypePrice = 0;
+    let canvasTypePrice = 0;
+    let borderTypePrice = 0;
+    let categoryPrice = 0;
+    let calculatedPrice = 0;
+
+    const width = pin.width;
+    const height = pin.height;
+
+    const paintPromise = client.fetch(paintTypesPriceQuery(pin.paintType)).then((data) => {
+      paintTypePrice = data[0].price;
+    });
+    const canvasPromise = client.fetch(canvasTypesPriceQuery(pin.canvasType)).then((data) => {
+      canvasTypePrice = data[0].price;
+    })
+    const borderPromise = client.fetch(borderTypesPriceQuery(pin.borderType)).then((data) => {
+      borderTypePrice = data[0].price;
+    })
+    const categoryPromise = client.fetch(categoryPriceQuery(pin.category)).then((data) => {
+      categoryPrice = data[0].price;
+    })
+
+    Promise.all([paintPromise, canvasPromise, borderPromise, categoryPromise]).then(() => {
+      calculatedPrice = ((width * height * paintTypePrice) + (width * height * canvasTypePrice) + ((width + height) * 2 * borderTypePrice) + (pin.time * pin.timePrice)) * categoryPrice;
+      setRecomendedPrice(calculatedPrice);
+      // pin.price = calculatedPrice;
+      // setPinDetail(pin);
+    });
+  }
 
   const navigate = useNavigate();
 
@@ -73,15 +118,13 @@ const CreatePin = ({ user }) => {
     });
   }, [])
 
-  console.log(categories)
 
   const savePin = () => {
-    if (title && about && destination && imageAsset?._id && category && width && height && time && timePrice) {
+    if (title && about && imageAsset?._id && category && width && height && time && timePrice) {
       const doc = {
         _type: 'pin',
         title,
         about,
-        destination,
         width: Number(width),
         height: Number(height),
         time: Number(time),
@@ -102,7 +145,6 @@ const CreatePin = ({ user }) => {
         paintType: { _ref: paintType },
         canvasType: { _ref: canvasType },
         borderType: { _ref: borderType },
-        customPrice: customPrice,
         price: Number(price),
       };
       client.create(doc).then(() => {
@@ -200,13 +242,6 @@ const CreatePin = ({ user }) => {
             value={about}
             onChange={(e) => setAbout(e.target.value)}
             placeholder="Tell everyone what your Pin is about"
-            className="outline-none text-base sm:text-lg border-b-2 border-gray-200 p-2"
-          />
-          <input
-            type="url"
-            value={destination}
-            onChange={(e) => setDestination(e.target.value)}
-            placeholder="Add a destination link"
             className="outline-none text-base sm:text-lg border-b-2 border-gray-200 p-2"
           />
 
@@ -313,12 +348,9 @@ const CreatePin = ({ user }) => {
               </select>
             </div>
             <div className=''>
-              <div className="flex items-center mb-4">
-                <label htmlFor="customPrice" className="mr-2 font-semibold text:lg sm:text-xl">Set Custom Price</label>
-                <input id="customPrice" type="checkbox" value={customPrice} onChange={(e) => setCustomPrice(e.target.checked)} className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded" />
-              </div>
+              <p className='text-xl font-semibold'>Recomended price: {recomendedPrice }</p>
               <input
-                disabled={!customPrice}
+
                 type="number"
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}

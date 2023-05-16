@@ -21,9 +21,8 @@ const PinDetail = ({ user }) => {
 
 		if (query) {
 			client.fetch(`${query}`).then((data) => {
-				if(!data[0]?.customPrice) calculatePrice(data[0])
-				else setPinDetail(data[0]);
-				
+				setPinDetail(data[0]);
+
 				console.log(data);
 				updateRating(data[0]?.category?._ref);
 				if (data[0]) {
@@ -40,35 +39,7 @@ const PinDetail = ({ user }) => {
 		fetchPinDetails();
 	}, [pinId, user]);
 
-	const calculatePrice = (pin) =>{
-		let paintTypePrice = 0;
-		let canvasTypePrice = 0;
-		let borderTypePrice = 0;
-		let categoryPrice = 0;
-		let calculatedPrice = 0;
 
-		const width = pin.width;
-		const height = pin.height;
-
-		const paintPromise = client.fetch(paintTypesPriceQuery(pin.paintType.name)).then((data) =>{
-			paintTypePrice = data[0].price;
-		});
-		const canvasPromise = client.fetch(canvasTypesPriceQuery(pin.canvasType.name)).then((data) =>{
-			canvasTypePrice = data[0].price;
-		})
-		const borderPromise = client.fetch(borderTypesPriceQuery(pin.borderType.name)).then((data) =>{
-			borderTypePrice = data[0].price;
-		})
-		const categoryPromise = client.fetch(categoryPriceQuery(pin.category._ref)).then((data) =>{
-			categoryPrice = data[0].price;
-		})
-
-		Promise.all([paintPromise, canvasPromise, borderPromise, categoryPromise]).then(() => {
-			calculatedPrice = ((width * height * paintTypePrice) + (width * height * canvasTypePrice) + ((width + height) * 2 * borderTypePrice) + (pin.time * pin.timePrice)) * categoryPrice;
-			pin.price = calculatedPrice;
-			setPinDetail(pin);
-		});
-	}
 
 	const updateRating = (categoryId) => {
 		if (user) {
@@ -160,9 +131,6 @@ const PinDetail = ({ user }) => {
 									<MdDownloadForOffline />
 								</a>
 							</div>
-							<a href={pinDetail.destination} target="_blank" rel="noreferrer">
-								{pinDetail.destination?.slice(8)}
-							</a>
 						</div>
 						<div className='space-y-3'>
 							<h1 className="text-4xl font-bold break-words mt-3">

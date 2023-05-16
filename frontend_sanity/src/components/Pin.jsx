@@ -131,7 +131,7 @@ const Pin = ({ pin }) => {
               </div>
               {user && (alreadySaved?.length !== 0 ? (
                 <button type="button" className="bg-red-500 opacity-70 hover:opacity-100 text-white font-bold px-5 py-1 text-base rounded-3xl hover:shadow-md outline-none">
-                  {pin?.save?.length}  Saved
+                  {pin?.save?.length}  Added to cart
                 </button>
               ) : (
                 <button
@@ -142,7 +142,7 @@ const Pin = ({ pin }) => {
                   type="button"
                   className="bg-red-500 opacity-70 hover:opacity-100 text-white font-bold px-5 py-1 text-base rounded-3xl hover:shadow-md outline-none"
                 >
-                  {pin?.save?.length}   {savingPost ? 'Saving' : 'Save'}
+                  {pin?.save?.length}   {savingPost ? 'Adding...' : 'Add to cart'}
                 </button>
               ))}
             </div>

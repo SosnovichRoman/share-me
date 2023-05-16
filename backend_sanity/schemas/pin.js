@@ -14,11 +14,6 @@ export default {
       type: 'string',
     },
     {
-      name: 'destination',
-      title: 'Destination',
-      type: 'url',
-    },
-    {
       name: 'width',
       title: 'Width',
       type: 'number',
@@ -61,11 +56,6 @@ export default {
       title: 'Category',
       type: 'reference',
       to: [{ type: 'category' }],
-    },
-    {
-      name: 'customPrice',
-      title: 'Custom Price',
-      type: 'boolean',
     },
     {
       name: 'price',

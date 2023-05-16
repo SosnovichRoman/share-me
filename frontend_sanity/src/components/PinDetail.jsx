@@ -16,6 +16,8 @@ const PinDetail = ({ user }) => {
 	const [addingComment, setAddingComment] = useState(false);
 	const pinDetailRate = 2;
 
+	const [savingPost, setSavingPost] = useState(false);
+
 	const fetchPinDetails = () => {
 		const query = pinDetailQuery(pinId);
 
@@ -38,8 +40,6 @@ const PinDetail = ({ user }) => {
 	useEffect(() => {
 		fetchPinDetails();
 	}, [pinId, user]);
-
-
 
 	const updateRating = (categoryId) => {
 		if (user) {
@@ -103,6 +103,36 @@ const PinDetail = ({ user }) => {
 		}
 	};
 
+	let alreadySaved = pinDetail?.save;
+
+	alreadySaved = alreadySaved?.length > 0 ? alreadySaved : [];
+
+	const savePin = (id) => {
+		if (alreadySaved?.length === 0) {
+			setSavingPost(true);
+
+			client
+				.patch(id)
+				.setIfMissing({ save: [] })
+				.insert('after', 'save[-1]', [{
+					_key: uuidv4(),
+					userId: user?.id,
+					postedBy: {
+						_type: 'postedBy',
+						_ref: user?.id,
+					},
+				}])
+				.commit()
+				.then(() => {
+					window.location.reload();
+					setSavingPost(false);
+					console.log(pinDetail.category._ref);
+					console.log(pinDetail);
+					updateRating(pinDetail.category._ref);
+				});
+		}
+	};
+
 	if (!pinDetail) {
 		return (
 			<Spinner message="Showing pin" />
@@ -131,6 +161,22 @@ const PinDetail = ({ user }) => {
 									<MdDownloadForOffline />
 								</a>
 							</div>
+							{user && (alreadySaved?.length !== 0 ? (
+								<button type="button" className="bg-red-500 opacity-70 hover:opacity-100 text-white font-bold px-5 py-1 text-base rounded-3xl hover:shadow-md outline-none">
+									{pinDetail?.save?.length}  Added to cart
+								</button>
+							) : (
+								<button
+									onClick={(e) => {
+										e.stopPropagation();
+										savePin(pinDetail._id);
+									}}
+									type="button"
+									className="bg-red-500 opacity-70 hover:opacity-100 text-white font-bold px-5 py-1 text-base rounded-3xl hover:shadow-md outline-none"
+								>
+									{savingPost ? 'Adding...' : 'Add to cart'}
+								</button>
+							))}
 						</div>
 						<div className='space-y-3'>
 							<h1 className="text-4xl font-bold break-words mt-3">

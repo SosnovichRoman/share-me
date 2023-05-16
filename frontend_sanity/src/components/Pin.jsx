@@ -27,7 +27,7 @@ const Pin = ({ pin }) => {
       });
   };
 
-  let alreadySaved = pin?.save?.filter((item) => item?.postedBy?._id === user?.id);
+  let alreadySaved = pin?.save;
 
   alreadySaved = alreadySaved?.length > 0 ? alreadySaved : [];
 
@@ -48,7 +48,7 @@ const Pin = ({ pin }) => {
         }])
         .commit()
         .then(() => {
-          //window.location.reload();
+          window.location.reload();
           setSavingPost(false);
           console.log(category._ref);
           console.log(pin);
@@ -142,7 +142,7 @@ const Pin = ({ pin }) => {
                   type="button"
                   className="bg-red-500 opacity-70 hover:opacity-100 text-white font-bold px-5 py-1 text-base rounded-3xl hover:shadow-md outline-none"
                 >
-                  {pin?.save?.length}   {savingPost ? 'Adding...' : 'Add to cart'}
+                  {savingPost ? 'Adding...' : 'Add to cart'}
                 </button>
               ))}
             </div>

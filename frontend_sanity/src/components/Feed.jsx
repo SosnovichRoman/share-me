@@ -24,6 +24,10 @@ const Feed = ({ user }) => {
 
   // Create feed
   useEffect(() => {
+    fillFeed();
+  }, [categoryId, categories, user]);
+
+  const fillFeed = () =>{
     if (categoryId) {
       setLoading(true);
       const query = searchQuery(categoryId);
@@ -34,11 +38,6 @@ const Feed = ({ user }) => {
 
     } else {
       setLoading(true);
-
-      // client.fetch(feedQuery).then((data) => {
-      //   setPins(data);
-      //   setLoading(false);
-      // });
 
       let cancelled = false;
       setPins([]);
@@ -83,7 +82,7 @@ const Feed = ({ user }) => {
         cancelled = true;
       }
     }
-  }, [categoryId, categories, user]);
+  }
 
   const ideaName = categoryId || 'new';
   if (loading) {

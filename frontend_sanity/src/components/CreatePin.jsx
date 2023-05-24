@@ -120,7 +120,12 @@ const CreatePin = ({ user }) => {
 
 
   const savePin = () => {
+
     if (title && about && imageAsset?._id && category && width && height && time && timePrice) {
+      if (!user) {
+        alert("Please log in.")
+        return
+      }
       const doc = {
         _type: 'pin',
         title,

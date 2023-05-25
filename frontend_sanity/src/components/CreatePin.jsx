@@ -43,11 +43,11 @@ const CreatePin = ({ user }) => {
   console.log(pin)
 
   useEffect(() => {
-    if(title && about && width && height && time && timePrice && category && paintType && canvasType && borderType){
+    if (title && about && width && height && time && timePrice && category && paintType && canvasType && borderType) {
       calculatePrice(pin);
     }
   }, [pin])
-  
+
 
   const calculatePrice = (pin) => {
     let paintTypePrice = 0;
@@ -119,7 +119,7 @@ const CreatePin = ({ user }) => {
   }, [])
 
 
-  const savePin = () => {
+  const createPin = () => {
 
     if (title && about && imageAsset?._id && category && width && height && time && timePrice) {
       if (!user) {
@@ -353,7 +353,7 @@ const CreatePin = ({ user }) => {
               </select>
             </div>
             <div className=''>
-              <p className='text-xl font-semibold'>Recomended price: {recomendedPrice }</p>
+              <p className='text-xl font-semibold'>Recomended price: {recomendedPrice}</p>
               <input
 
                 type="number"
@@ -367,7 +367,7 @@ const CreatePin = ({ user }) => {
             <div className="flex justify-end items-end">
               <button
                 type="button"
-                onClick={savePin}
+                onClick={createPin}
                 className="bg-red-500 text-white font-bold p-2 rounded-full w-28 outline-none"
               >
                 Save Pin

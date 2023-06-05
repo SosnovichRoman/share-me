@@ -73,8 +73,8 @@ const CreatePin = ({ user }) => {
     })
 
     Promise.all([paintPromise, canvasPromise, borderPromise, categoryPromise]).then(() => {
-      calculatedPrice = ((width * height * paintTypePrice) + (width * height * canvasTypePrice) + ((width + height) * 2 * borderTypePrice) + (pin.time * pin.timePrice)) * categoryPrice;
-      setRecomendedPrice(calculatedPrice);
+      calculatedPrice = ((width * height * paintTypePrice) + (width * height * canvasTypePrice) + ((Number(width) + Number(height)) * 2 * borderTypePrice) + (pin.time * pin.timePrice)) * categoryPrice;
+      setRecomendedPrice(Math.round(calculatedPrice));
       // pin.price = calculatedPrice;
       // setPinDetail(pin);
     });

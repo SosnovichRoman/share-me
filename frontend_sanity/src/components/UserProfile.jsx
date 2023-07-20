@@ -15,7 +15,7 @@ const notActiveBtnStyles = 'bg-primary mr-4 text-black font-bold p-2 rounded-ful
 const UserProfile = () => {
   const [user, setUser] = useState();
   const [pins, setPins] = useState();
-  const [text, setText] = useState('Created');
+  const [text, setText] = useState('My pictures');
   const [activeBtn, setActiveBtn] = useState('created');
   const navigate = useNavigate();
   const { userId } = useParams();
@@ -117,23 +117,6 @@ const UserProfile = () => {
               >
                 <AiOutlineLogout color="red" fontSize={21} />
               </button>
-
-              // <GoogleLogout
-              //   clientId={`${process.env.REACT_APP_GOOGLE_API_TOKEN}`}
-              //   render={(renderProps) => (
-              //     <button
-              //       type="button"
-              //       className=" bg-white p-2 rounded-full cursor-pointer outline-none shadow-md"
-              //       onClick={renderProps.onClick}
-              //       disabled={renderProps.disabled}
-              //     >
-              //       <AiOutlineLogout color="red" fontSize={21} />
-              //     </button>
-              //   )}
-              //   onLogoutSuccess={logout}
-              //   onFailure={(m) => console.log(m)}
-              //   cookiePolicy="single_host_origin"
-              // />
             )}
           </div>
         </div>
